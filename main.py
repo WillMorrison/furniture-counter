@@ -33,6 +33,45 @@ class Layout:
                 rooms.append(Room(name=label[1], row=row, col=label.start(1)))
         return rooms
 
+    def count_chairs(self, room: Room) -> collections.Counter:
+        chair_count = collections.Counter({'W':0, 'P':0, 'S':0, 'C':0})
+
+        # Breadth first search the whole room for chairs.
+        visited = set()  # holds coordinates of grid points that have already been visited
+        to_visit = collections.deque([(room.row, room.col)])  # hold coordinates of grid points yet to visit
+
+        def visit(row, col):
+            if (row, col) in visited:
+                return
+            visited.add((row, col))
+
+            # update counter if we're visiting a chair
+            char = self.grid[row][col]
+            if char in CHAIRS:
+                chair_count[char] += 1
+            
+            for next_row, next_col in [(row+1, col), (row, col+1), (row-1, col), (row, col-1)]:
+                # avoid revisiting the same coordinates
+                if (next_row, next_col) in visited:
+                    continue
+                # avoid walls and the edges of the grid
+                if next_row < 0 or next_col < 0:
+                    continue
+                try:
+                    if self.grid[next_row][next_col] in WALLS:
+                        continue
+                except IndexError:
+                    continue
+
+                # If checks pass, add the adjacent coordinates to the visiting queue
+                to_visit.appendleft((next_row, next_col))
+        
+        while to_visit:
+            next_row, next_col = to_visit.pop()
+            visit(next_row, next_col)
+        
+        return chair_count
+
 
 
 
