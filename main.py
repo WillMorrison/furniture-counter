@@ -73,6 +73,8 @@ class Layout:
         return chair_count
 
 
+def format_count(name:str, counts:collections.Counter) -> str:
+    return f"{name}:\nW: {counts['W']}, P: {counts['P']}, S: {counts['S']}, C: {counts['C']}"
 
 
 if __name__ == '__main__':
@@ -82,3 +84,15 @@ if __name__ == '__main__':
 
     with open(args.file, 'rt') as f:
        layout = Layout.from_multiline_string(f.read())
+
+    counts = []
+    total = collections.Counter({'W':0, 'P':0, 'S':0, 'C':0})
+    for room in layout.find_rooms():
+        room_count = layout.count_chairs(room)
+        total.update(room_count)
+        counts.append((room.name, room_count))
+
+    counts.sort() # name is the first field, so sort alphabetically by room name
+    print(format_count('total', total))
+    for name, count in counts:
+        print(format_count(name, count))
