@@ -1,0 +1,1 @@
+Run with `python3 main.py --file=/path/to/rooms.txt`

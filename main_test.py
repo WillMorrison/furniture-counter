@@ -69,6 +69,21 @@ class LayoutTest(unittest.TestCase):
         self.assertEqual(layout.count_chairs(Room(name='baz quux', row=5, col=3)),
                          collections.Counter({'W':2, 'P':0, 'S':1, 'C':0}))
 
+    def test_count_chairs_diagonal_walls(self):
+        layout_str = textwrap.dedent("""\
+            +-------+-------+
+            |\        (foo) |
+            |S\          C  |
+            |  \        P   |
+            |   +------+    |
+            | (bar)   /     |
+            |    WW  /      |
+            +-------+-------+""")
+        
+        layout:Layout = Layout.from_multiline_string(layout_str)
+        self.assertEqual(layout.count_chairs(Room(name='bar', row=5, col=3)),
+                         collections.Counter({'W':2, 'P':0, 'S':1, 'C':0}))
+
     def test_count_chairs_unbounded_room(self):
         layout_str = textwrap.dedent("""\
                     +-------+
